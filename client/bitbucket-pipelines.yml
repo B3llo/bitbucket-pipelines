@@ -1,0 +1,42 @@
+image: atlassian/default-image:2
+
+options:
+  max-time: 15
+pipelines:
+  branches:
+    master:
+      - step:
+          name: AWS Setup and Build
+          services:
+            - docker
+          script:
+            - docker build -t app-server .
+            - pipe: atlassian/aws-ecr-push-image:1.5.0
+              variables:
+                #Refers to the ECR name
+                IMAGE_NAME: app-server
+                TAGS: "$BITBUCKET_COMMIT latest"
+                DEBUG: "true"
+
+            - pipe: atlassian/aws-eks-kubectl-run:2.2.0
+              variables:
+                CLUSTER_NAME: <CLUSTER_NAME>
+                KUBECTL_COMMAND: "config current-context"
+
+      - step:
+          # trigger: manual
+          name: "Deploy to EKS"
+          script:
+            - pipe: atlassian/aws-eks-kubectl-run:2.2.0
+              variables:
+                CLUSTER_NAME: <CLUSTER_NAME>
+                KUBECTL_COMMAND: "apply"
+                RESOURCE_PATH: "./eks"
+                KUBECTL_APPLY_ARGS: "-f"
+                DEBUG: "true"
+
+            - pipe: atlassian/aws-eks-kubectl-run:2.2.0
+              variables:
+                CLUSTER_NAME: <CLUSTER_NAME>
+                KUBECTL_COMMAND: "rollout restart deployment app-client-deployment"
+                DEBUG: "true"

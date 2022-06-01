@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-client-deployment
+  labels:
+    app: app-client
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-client
+  template:
+    metadata:
+      labels:
+        app: app-client
+    spec:
+      containers:
+        - name: app-client
+          image: <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/<AWS_ECR_REPOSITORY>:latest
+
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4200

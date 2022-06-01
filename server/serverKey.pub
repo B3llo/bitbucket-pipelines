@@ -1,0 +1,4 @@
+Server Public SSH Key
+
+# Must be stored inside BitBucket Repository Access keys
+    * Repository Settings > General > Access keys  
