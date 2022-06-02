@@ -11,7 +11,7 @@
 
 ## 🛑 Project
 
-🔄 Devops pipeline with GitHub Actions and AWS EKS
+🔄 DevOps Continuous Deploy with BitBucket Pipelines and AWS EKS
 
 ## ⚜️ Features
 
